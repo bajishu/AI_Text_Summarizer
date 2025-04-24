@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Text Summarizer</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="light-mode"> <!-- Default to light mode -->
+    <div class="container">
+        <header>
+            <h1>AI-Powered Text Summarizer</h1>
+            <!-- Dark Mode Toggle Button -->
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+        </header>
+
+        <div class="form-container">
+            <textarea id="inputText" placeholder="Paste your text here..."></textarea>
+            <button id="summarizeButton">Summarize</button>
+        </div>
+
+        <div id="resultContainer" class="result-container">
+            <h2>Summary:</h2>
+            <p id="summaryText">Your summary will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        // Ensure the toggle button works correctly
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Set event listener to toggle dark mode
+        darkModeToggle.addEventListener('change', () => {
+            body.classList.toggle('dark-mode', darkModeToggle.checked);
+            body.classList.toggle('light-mode', !darkModeToggle.checked);
+        });
+
+        // Handle summarization button
+        const summarizeButton = document.getElementById('summarizeButton');
+        const inputText = document.getElementById('inputText');
+        const summaryText = document.getElementById('summaryText');
+
+        summarizeButton.addEventListener('click', async () => {
+            const text = inputText.value.trim();
+
+            if (!text) {
+                alert('Please enter some text to summarize.');
+                return;
+            }
+
+            const response = await fetch('/summarize/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                summaryText.textContent = data.summary;
+            } else {
+                summaryText.textContent = 'Failed to generate summary.';
+            }
+        });
+    </script>
+</body>
+</html>
+
